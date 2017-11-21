@@ -1,0 +1,56 @@
+{
+  "name": "front-end-packager",
+  "version": "0.1.0",
+  "description": "Package a list of js or css files",
+  "keywords": [
+    "bundle",
+    "bundler",
+    "packager",
+    "front",
+    "end"
+  ],
+  "homepage": "https://github.com/tflanagan/node-front-end-packager",
+  "bugs": {
+    "url": "https://github.com/tflanagan/node-front-end-packager/issues",
+    "email": "contact@tristianflanagan.com"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Tristian Flanagan",
+    "url": "https://github.com/tflanagan",
+    "email": "contact@tristianflanagan.com"
+  },
+  "maintainers": [
+    {
+      "name": "Tristian Flanagan",
+      "url": "https://github.com/tflanagan",
+      "email": "contact@tristianflanagan.com"
+    }
+  ],
+  "contributors": [
+    "Tristian Flanagan <contact@tristianflanagan.com> (https://github.com/tflanagan)"
+  ],
+  "main": "src/front-end-packager.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tflanagan/node-front-end-packager.git"
+  },
+  "engines": {
+    "node": ">=4.0.*"
+  },
+  "git": "https://github.com/tflanagan/node-front-end-packager.git",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "chokidar": "^1.7.0",
+    "clean-css": "^4.1.9",
+    "debug": "^3.1.0",
+    "file-type": "^7.2.0",
+    "generic-throttle": "^1.3.0",
+    "is-invalid-path": "^0.1.0",
+    "is-svg": "^2.1.0",
+    "is-url": "^1.2.2",
+    "javascript-obfuscator": "^0.12.2",
+    "lodash.merge": "^4.6.0",
+    "request": "^2.83.0"
+  }
+}
