@@ -33,21 +33,21 @@ const attemptMinify = (type, code, options) => {
 	});
 };
 
-const bundle = (sources, destination, options) => {
+const bundle = (sources, destination, options, reqOptions) => {
 	if(!options){
 		options = {};
 	}
 
 	const target = fs.createWriteStream(destination);
 
-	return loopFiles(sources, target, options).then(() => {
+	return loopFiles(sources, target, options, reqOptions).then(() => {
 		target.end();
 
 		if(!options.watch){
 			return;
 		}
 
-		return watch(sources, destination, options);
+		return watch(sources, destination, options, reqOptions);
 	});
 };
 
@@ -57,12 +57,12 @@ const cleanseResults = (results) => {
 	return results;
 };
 
-const downloadFile = (url) => {
+const downloadFile = (url, reqOptions) => {
 	return new Promise((resolve, reject) => {
-		get({
+		get(merge({
 			url: url,
 			encoding: null
-		}, (err, response, body) => {
+		}, reqOptions || {}), (err, response, body) => {
 			if(err){
 				return reject(err);
 			}
@@ -125,14 +125,14 @@ const encodeExternalResources = (code, source) => {
 	});
 };
 
-const getFile = (source) => {
+const getFile = (source, reqOptions) => {
 	return new Promise((resolve, reject) => {
 		const basefile = path.basename(source);
 
 		if(isUrl(source)){
 			debug('Downloading ' + basefile + '...');
 
-			return downloadFile(source).then(resolve).catch(reject);
+			return downloadFile(source, reqOptions).then(resolve).catch(reject);
 		}
 
 		debug('Reading ' + basefile + '...');
@@ -141,13 +141,13 @@ const getFile = (source) => {
 	});
 };
 
-const loopFiles = (sources, target, options) => {
+const loopFiles = (sources, target, options, reqOptions) => {
 	return Promise.each(sources, (source) => {
 		const basefile = (typeof(source) !== 'object' ? path.basename(source) : source.map((file) => {
 			return path.basename(file);
 		}).join(', '));
 
-		return processSource(source, target).then((results) => {
+		return processSource(source, target, reqOptions).then((results) => {
 			results = cleanseResults(results);
 
 			if(results.ext === 'js'){
@@ -225,7 +225,7 @@ const minifyJs = (data, options) => {
 	});
 };
 
-const parseFile = (source, target) => {
+const parseFile = (source, target, reqOptions) => {
 	return new Promise((resolve, reject) => {
 		if(!isUrl(source) && isInvalidPath(source)){
 			try {
@@ -237,7 +237,7 @@ const parseFile = (source, target) => {
 			}
 		}
 
-		return getFile(source).then((buffer) => {
+		return getFile(source, reqOptions).then((buffer) => {
 			return buffer.toString('utf8');
 		}).then(resolve).catch(() => {
 			try {
@@ -251,9 +251,9 @@ const parseFile = (source, target) => {
 	});
 };
 
-const processSource = (source, target) => {
+const processSource = (source, target, reqOptions) => {
 	if(typeof(source) !== 'object'){
-		return parseFile(source, target).then((code) => {
+		return parseFile(source, target, reqOptions).then((code) => {
 			const parts = source.split('.');
 
 			return {
@@ -265,7 +265,7 @@ const processSource = (source, target) => {
 	}
 
 	return Promise.reduce(source, (code, file) => {
-		return parseFile(file, target).then((results) => {
+		return parseFile(file, target, reqOptions).then((results) => {
 			return code + '\n' + results;
 		});
 	}, '').then((code) => {
@@ -296,7 +296,7 @@ const readFile = (filepath) => {
 	});
 };
 
-const watch = (sources, destination, options) => {
+const watch = (sources, destination, options, reqOptions) => {
 	const throttle = new Throttle(1);
 
 	const watcher = chokidar.watch(sources, merge({
@@ -310,7 +310,7 @@ const watch = (sources, destination, options) => {
 		return throttle.acquire((resolve, reject) => {
 			throttle.clear();
 
-			return bundle(sources, destination, options);
+			return bundle(sources, destination, options, reqOptions);
 		});
 	};
 
