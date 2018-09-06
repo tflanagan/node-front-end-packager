@@ -1,6 +1,6 @@
 {
   "name": "front-end-packager",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Package a list of js or css files",
   "keywords": [
     "bundle",
@@ -51,6 +51,6 @@
     "is-url": "^1.2.2",
     "javascript-obfuscator": "^0.12.2",
     "lodash.merge": "^4.6.0",
-    "request": "^2.83.0"
+    "request": "^2.88.0"
   }
 }

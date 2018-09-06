@@ -113,7 +113,19 @@ const encodeExternalResources = (code, source) => {
 			if(url.match(/^https?:\/\//)){
 				return downloadFile(url).then(replace);
 			}else{
-				return readFile(path.join(path.dirname(source), url)).then(replace);
+				return readFile(path.join(path.dirname(source), url)).then(replace).catch((err) => {
+					if(err.code !== 'ENOENT'){
+						throw err;
+					}
+
+					const parts = source.split('/');
+
+					parts.splice(parts.length - 1, 1);
+
+					parts.push(url);
+
+					return downloadFile(parts.join('/')).then(replace);
+				});
 			}
 		}).then(() => {
 			return resolve(code);
