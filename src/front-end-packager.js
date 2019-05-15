@@ -163,6 +163,14 @@ const loopFiles = (sources, target, options, reqOptions) => {
 			results = cleanseResults(results);
 
 			if(results.ext === 'js'){
+				if(options.isolateScopes){
+					results.code = [
+						'(function(){',
+							results.code,
+						'})();'
+					].join('');
+				}
+
 				return results;
 			}
 
@@ -172,7 +180,11 @@ const loopFiles = (sources, target, options, reqOptions) => {
 				return results;
 			});
 		}).then((results) => {
-			const isProd = options.minify || (process.env.hasOwnProperty('NODE_ENV') && !!process.env.NODE_ENV.match(/production/));
+			let isProd = options.minify;
+
+			if(isProd === undefined && process.env.hasOwnProperty('NODE_ENV') && !!process.env.NODE_ENV.match(/production/)){
+				isProd = true;
+			}
 
 			if(!isProd || (isProd && !results.minify)){
 				return results.code;
